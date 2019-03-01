@@ -93,6 +93,16 @@ elif [ "$(systemd-detect-virt | xargs)" == "oracle" ] ; then
   /usr/bin/env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' install virtualbox-guest-utils
 fi
 
+## Detect cloud-init device and install cloud-init
+if [ "$(systemd-detect-virt | xargs)" != "None" ] ; then
+  if [ -r "/dev/sr0" ] ; then #sr0 = link for cdrom
+    if [ "$(blkid -o export /dev/sr0 | grep "LABEL" | cut -d'=' -f 2 | xargs)" == "cidata" ] ; then
+      echo "Cloud-init device Detected, installing cloud-init"
+      /usr/bin/env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' install cloud-init
+    fi
+  fi
+fi
+
 ## Disable portmapper / rpcbind (security)
 systemctl disable rpcbind
 systemctl stop rpcbind
