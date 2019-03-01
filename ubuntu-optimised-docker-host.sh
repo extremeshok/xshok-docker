@@ -107,6 +107,16 @@ fi
 systemctl disable rpcbind
 systemctl stop rpcbind
 
+## Disable SSH password logins (security)
+if cat "${HOME}/.ssh/authorized_keys" | tail -n 1 | cut -d' ' -f 1 | grep -q 'ssh-' ; then
+  echo "SSH authorized_keys detected, Disabling password login"
+  sed -i 's|PermitRootLogin yes|#PermitRootLogin yes|g' /etc/ssh/sshd_config
+  sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
+  sed -i 's|#PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
+  sed -i 's|#HostKey /etc/|HostKey /etc/|g' /etc/ssh/sshd_config
+  systemctl reload ssh
+fi
+
 ## Set Timezone to UTC and enable NTP
 timedatectl set-timezone UTC
 cat <<'EOF' > /etc/systemd/timesyncd.conf
@@ -123,7 +133,6 @@ timedatectl set-ntp true
 ## Bugfix: high swap usage with low memory usage
 echo "vm.swappiness=10" >> /etc/sysctl.conf
 sysctl -p
-
 
 ## Pretty MOTD BANNER
 if [ -z "${NO_MOTD_BANNER}" ] ; then
@@ -186,7 +195,7 @@ APT::Periodic::AutocleanInterval "7";
 APT::Periodic::Unattended-Upgrade "1";
 EOF
 
-## Docker
+## Docker-ce
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 apt-get update > /dev/null
@@ -196,9 +205,6 @@ apt-get update > /dev/null
 curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-
-#statements
-#cloud-init,
 
 ## Script Finish
 echo -e '\033[1;33m Finished....please restart the system \033[0m'
