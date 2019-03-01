@@ -143,6 +143,7 @@ sysctl -p
 if [ -z "${NO_MOTD_BANNER}" ] ; then
   if [ -d "/etc/update-motd.d/" ] ; then
     if [ ! -f "/etc/update-motd.d/99-extremeshok" ] ; then
+      sed -i 's|PrintMotd no|PrintMotd yes|g' /etc/ssh/sshd_config
       cat <<'EOF' > /etc/update-motd.d/99-extremeshok
    This system is optimised by:            https://eXtremeSHOK.com
      __   ___                            _____ _    _  ____  _  __
