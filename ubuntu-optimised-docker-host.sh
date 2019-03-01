@@ -72,6 +72,7 @@ mlocate \
 nano \
 net-tools \
 pigz \
+python3-pip \
 whois \
 software-properties-common \
 sshpass \
