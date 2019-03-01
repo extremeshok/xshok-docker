@@ -21,7 +21,7 @@
 # to disable the MOTD banner, set the env NO_MOTD_BANNER to true (export NO_MOTD_BANNER=true)
 #
 # Usage:
-# curl -O https://raw.githubusercontent.com/extremeshok/xshok-docker/master/ubuntu-optimised-docker-host.sh && chmod +x ubuntu-optimised-docker-host.sh
+# wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/ubuntu-optimised-docker-host.sh -O ubuntu-optimised-docker-host.sh && chmod +x ubuntu-optimised-docker-host.sh && ./ubuntu-optimised-docker-host.sh
 # ./ubuntu-optimised-docker-host.sh
 #
 ################################################################################
@@ -38,7 +38,7 @@ export LC_ALL="C"
 echo -e "Acquire::ForceIPv4 \"true\";\\n" > /etc/apt/apt.conf.d/99force-ipv4
 
 ## Refresh the package lists
-apt-get update > /dev/null
+apt-get update > /dev/null 2>&1
 
 ## Remove conflicting utilities
 /usr/bin/env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' purge ntp openntpd snap lxd bind docker bluez docker docker-engine docker.io containerd runc
@@ -198,7 +198,7 @@ EOF
 ## Docker-ce
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-apt-get update > /dev/null
+apt-get update > /dev/null 2>&1
 /usr/bin/env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' install docker-ce docker-ce-cli containerd.io
 
 ## Docker-compose
