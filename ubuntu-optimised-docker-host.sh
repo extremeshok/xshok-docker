@@ -22,7 +22,6 @@
 #
 # Usage:
 # wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/ubuntu-optimised-docker-host.sh -O ubuntu-optimised-docker-host.sh && chmod +x ubuntu-optimised-docker-host.sh && ./ubuntu-optimised-docker-host.sh
-# ./ubuntu-optimised-docker-host.sh
 #
 ################################################################################
 #
@@ -33,6 +32,11 @@
 # Set the local
 export LANG="en_US.UTF-8"
 export LC_ALL="C"
+
+if [ "$(lsb_release -i 2>/dev/null | cut -f 2 | xargs)" != "Ubuntu" ] ; then
+  echo "ERROR: This script only supports Ubuntu"
+  exit 1
+fi
 
 ## Force APT to use IPv4
 echo -e "Acquire::ForceIPv4 \"true\";\\n" > /etc/apt/apt.conf.d/99force-ipv4
@@ -197,7 +201,7 @@ EOF
 
 ## Docker-ce
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+add-apt-repository "deb [arch=$(dpkg-architecture -q DEB_BUILD_ARCH)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 apt-get update > /dev/null 2>&1
 /usr/bin/env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' install docker-ce docker-ce-cli containerd.io
 
