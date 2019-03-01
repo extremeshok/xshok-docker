@@ -141,10 +141,9 @@ sysctl -p
 
 ## Pretty MOTD BANNER
 if [ -z "${NO_MOTD_BANNER}" ] ; then
-  if [ -d "/etc/update-motd.d/" ] ; then
-    if [ ! -f "/etc/update-motd.d/99-extremeshok" ] ; then
-      sed -i 's|PrintMotd no|PrintMotd yes|g' /etc/ssh/sshd_config
-      cat <<'EOF' > /etc/update-motd.d/99-extremeshok
+  if [ ! -f "/etc/update-motd.d/99-extremeshok" ] ; then
+    sed -i 's|PrintMotd no|PrintMotd yes|g' /etc/ssh/sshd_config
+    cat <<'EOF' > /etc/update-motd.d/99-extremeshok
    This system is optimised by:            https://eXtremeSHOK.com
      __   ___                            _____ _    _  ____  _  __
      \ \ / / |                          / ____| |  | |/ __ \| |/ /
@@ -153,7 +152,6 @@ if [ -z "${NO_MOTD_BANNER}" ] ; then
 |  __// . \| |_| | |  __/ | | | | |  __/____) | |  | | |__| | . \
  \___/_/ \_\\__|_|  \___|_| |_| |_|\___|_____/|_|  |_|\____/|_|\_\
 EOF
-    fi
   fi
 fi
 
@@ -211,6 +209,8 @@ apt-get update > /dev/null 2>&1
 curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+cat /etc/update-motd.d/99-extremeshok
 
 ## Script Finish
 echo -e '\033[1;33m Finished....please restart the system \033[0m'
