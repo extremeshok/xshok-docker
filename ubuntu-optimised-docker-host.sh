@@ -123,8 +123,9 @@ if cat "${HOME}/.ssh/authorized_keys" | tail -n 1 | cut -d' ' -f 1 | grep -q 'ss
 fi
 
 ## Disable local dns server, do not disable systemd-resolved as this breaks nameservers configured with netplan
-sed -i 's#DNSStubListener=yes|DNSStubListener=no|g' /etc/systemd/resolved.conf
+sed -i 's|#DNSStubListener=yes|DNSStubListener=no|g' /etc/systemd/resolved.conf
 sed -i 's|DNSStubListener=yes|DNSStubListener=no|g' /etc/systemd/resolved.conf
+sed -i 's|#DNSStubListener=no|DNSStubListener=no|g' /etc/systemd/resolved.conf
 rm -rf /etc/resolv.conf
 ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
 systemctl enable systemd-resolved.service
