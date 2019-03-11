@@ -112,15 +112,15 @@ fi
 systemctl disable rpcbind
 systemctl stop rpcbind
 
-## NEED TO FIX :: Disable SSH password logins (security)
-#if cat "${HOME}/.ssh/authorized_keys" | tail -n 1 | cut -d' ' -f 1 | grep -q 'ssh-' ; then
-#  echo "SSH authorized_keys detected, Disabling password login"
-#  sed -i 's|PermitRootLogin yes|#PermitRootLogin yes|g' /etc/ssh/sshd_config
+## Disable SSH password logins (security)
+if cat "${HOME}/.ssh/authorized_keys" | tail -n 1 | cut -d' ' -f 1 | grep -q 'ssh-' ; then
+  echo "SSH authorized_keys detected, Disabling password login"
+  sed -i 's|PermitRootLogin yes|#PermitRootLogin yes|g' /etc/ssh/sshd_config
 #  sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
-#  sed -i 's|#PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
-#  sed -i 's|#HostKey /etc/|HostKey /etc/|g' /etc/ssh/sshd_config
-#  systemctl reload ssh
-#fi
+  sed -i 's|#PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
+  sed -i 's|#HostKey /etc/|HostKey /etc/|g' /etc/ssh/sshd_config
+  systemctl reload ssh
+fi
 
 ## Disable local dns server, do not disable systemd-resolved as this breaks nameservers configured with netplan
 sed -i 's|#DNSStubListener=yes|DNSStubListener=no|g' /etc/systemd/resolved.conf
