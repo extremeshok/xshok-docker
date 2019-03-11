@@ -144,6 +144,14 @@ EOF
 service systemd-timesyncd start
 timedatectl set-ntp true
 
+## Create an 8GB swapfile
+fallocate -l 8G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+echo '/swapfile swap swap defaults 0 0' >> /etc/fstab
+swapon --show
+
 ## Bugfix: high swap usage with low memory usage
 echo "vm.swappiness=10" >> /etc/sysctl.conf
 sysctl -p
