@@ -3,6 +3,7 @@
 Scripts for working with docker
 
 ## Docker Optimization / Post Install Script for Ubuntu (xshok-ubuntu-docker-host.sh) *run once*
+Turns a fresh ubuntu install into an optimised docker host
 * Force APT to use IPv4
 * Remove conflicting utilities
 * Update and Install common system utilities
