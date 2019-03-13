@@ -19,6 +19,7 @@
 #
 # Notes:
 # to disable the MOTD banner, set the env NO_MOTD_BANNER to true (export NO_MOTD_BANNER=true)
+# to set the swapfile size to 1GB, set the env SWAPFILE_SIZE to 1 (export SWAPFILE_SIZE=1)
 #
 # Usage:
 # wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/ubuntu-optimised-docker-host.sh -O ubuntu-optimised-docker-host.sh && chmod +x ubuntu-optimised-docker-host.sh && ./ubuntu-optimised-docker-host.sh
@@ -144,13 +145,17 @@ EOF
 service systemd-timesyncd start
 timedatectl set-ntp true
 
-## Create an 8GB swapfile
-fallocate -l 8G /swapfile
-chmod 600 /swapfile
-mkswap /swapfile
-swapon /swapfile
-echo '/swapfile swap swap defaults 0 0' >> /etc/fstab
-swapon --show
+## Create a swapfile
+SWAPFILE_SIZE=${SWAPFILE_SIZE:-8}
+if [ "${SWAPFILE_SIZE}" != "0" ] ; then
+  echo "Creating ${SWAPFILE_SIZE}G swapfile"
+  fallocate -l ${SWAPFILE_SIZE}G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  echo '/swapfile swap swap defaults 0 0' >> /etc/fstab
+  swapon --show
+fi
 
 ## Bugfix: high swap usage with low memory usage
 echo "vm.swappiness=10" >> /etc/sysctl.conf
