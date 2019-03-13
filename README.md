@@ -2,7 +2,7 @@
 
 Scripts for working with docker
 
-## Docker Optimization / Post Install Script for Ubuntu (ubuntu-optimised-docker-host.sh) *run once*
+## Docker Optimization / Post Install Script for Ubuntu (xshok-ubuntu-docker-host.sh) *run once*
 * Force APT to use IPv4
 * Remove conflicting utilities
 * Update and Install common system utilities
@@ -31,5 +31,5 @@ Scripts for working with docker
 * to set the swapfile size to 1GB, set the env SWAPFILE_SIZE to 1 (export SWAPFILE_SIZE=1)
 
 ```
-wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/ubuntu-optimised-docker-host.sh -O ubuntu-optimised-docker-host.sh && chmod +x ubuntu-optimised-docker-host.sh && ./ubuntu-optimised-docker-host.sh
+wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-ubuntu-docker-host.sh -O xshok-ubuntu-docker-host.sh && chmod +x xshok-ubuntu-docker-host.sh && ./xshok-ubuntu-docker-host.sh
 ```

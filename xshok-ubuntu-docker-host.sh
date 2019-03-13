@@ -22,7 +22,7 @@
 # to set the swapfile size to 1GB, set the env SWAPFILE_SIZE to 1 (export SWAPFILE_SIZE=1)
 #
 # Usage:
-# wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/ubuntu-optimised-docker-host.sh -O ubuntu-optimised-docker-host.sh && chmod +x ubuntu-optimised-docker-host.sh && ./ubuntu-optimised-docker-host.sh
+# wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-ubuntu-docker-host.sh -O xshok-ubuntu-docker-host.sh && chmod +x xshok-ubuntu-docker-host.sh && ./xshok-ubuntu-docker-host.sh
 #
 ################################################################################
 #
