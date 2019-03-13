@@ -146,7 +146,7 @@ service systemd-timesyncd start
 timedatectl set-ntp true
 
 ## Create a swapfile
-SWAPFILE_SIZE=${SWAPFILE_SIZE:-8}
+SWAPFILE_SIZE=${SWAPFILE_SIZE:-4}
 if [ "${SWAPFILE_SIZE}" != "0" ] ; then
   echo "Creating ${SWAPFILE_SIZE}G swapfile"
   fallocate -l ${SWAPFILE_SIZE}G /swapfile

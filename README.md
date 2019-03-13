@@ -14,7 +14,7 @@ Turns a fresh ubuntu install into an optimised docker host
 * Disable SSH password logins (security) if Authorized_keys detected
 * Disable local dns server, do not disable systemd-resolved as this breaks nameservers configured with netplan
 * set-timezone UTC and enable timesyncd as nntp client
-* Create an 8GB swapfile (configurable with SWAPFILE_SIZE)
+* Create a swapfile (default is 4GB, configurable with SWAPFILE_SIZE)
 * Bugfix: high swap usage with low memory usage
 * Pretty MOTD BANNER (configurable with NO_MOTD_BANNER)
 * Increase max user watches
@@ -30,7 +30,7 @@ Turns a fresh ubuntu install into an optimised docker host
 ### Notes:
 * to disable the MOTD banner, set the env NO_MOTD_BANNER to true (export NO_MOTD_BANNER=true)
 * to set the swapfile size to 1GB, set the env SWAPFILE_SIZE to 1 (export SWAPFILE_SIZE=1)
-
+* Disable swapfile (export SWAPFILE_SIZE=0) 
 ```
 wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-ubuntu-docker-host.sh -O xshok-ubuntu-docker-host.sh && chmod +x xshok-ubuntu-docker-host.sh && ./xshok-ubuntu-docker-host.sh
 ```
