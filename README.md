@@ -1,4 +1,4 @@
-# xshok-docker :: eXtremeSHOK.com Docker (pve)
+# xshok-docker :: eXtremeSHOK.com Docker
 
 Scripts for working with docker
 
