@@ -26,9 +26,10 @@ Scripts for working with docker
 * Install Docker-compose
 * Enable TCP BBR congestion control, improves overall network throughput
 
-** Notes: 
-to disable the MOTD banner, set the env NO_MOTD_BANNER to true (export NO_MOTD_BANNER=true) **
-to set the swapfile size to 1GB, set the env SWAPFILE_SIZE to 1 (export SWAPFILE_SIZE=1)
+### Notes:
+* to disable the MOTD banner, set the env NO_MOTD_BANNER to true (export NO_MOTD_BANNER=true)
+* to set the swapfile size to 1GB, set the env SWAPFILE_SIZE to 1 (export SWAPFILE_SIZE=1)
+
 ```
 wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/ubuntu-optimised-docker-host.sh -O ubuntu-optimised-docker-host.sh && chmod +x ubuntu-optimised-docker-host.sh && ./ubuntu-optimised-docker-host.sh
 ```
