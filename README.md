@@ -30,7 +30,22 @@ Turns a fresh ubuntu install into an optimised docker host
 ### Notes:
 * to disable the MOTD banner, set the env NO_MOTD_BANNER to true (export NO_MOTD_BANNER=true)
 * to set the swapfile size to 1GB, set the env SWAPFILE_SIZE to 1 (export SWAPFILE_SIZE=1)
-* Disable swapfile (export SWAPFILE_SIZE=0) 
+* Disable swapfile (export SWAPFILE_SIZE=0)
 ```
 wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-ubuntu-docker-host.sh -O xshok-ubuntu-docker-host.sh && chmod +x xshok-ubuntu-docker-host.sh && ./xshok-ubuntu-docker-host.sh
+```
+
+## Docker Initialization / Start docker-compose.yml (xshok-init-docker.sh)
+Starts your docker-compose based containers properly
+* Automatically creates volume directories and touches volume files
+* Stops all running containers
+* Removes any orphaned containers
+* Pull/download dependencies and images
+* Forces recreation of all containers and will build required containers
+
+### NOTES:
+*  Script must be placed into the same directory as the docker-compose.yml
+```
+wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-init-docker.sh -O xshok-init-docker.sh && chmod +x xshok-init-docker.sh
+bash xshok-init-docker.sh
 ```
