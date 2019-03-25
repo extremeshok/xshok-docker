@@ -233,6 +233,24 @@ net.core.default_qdisc=fq
 net.ipv4.tcp_congestion_control=bbr
 EOF
 
+## Disable Transparent Hugepage, required for mongodb, redis
+cat <<EOF > /etc/systemd/system/docker-hugepage-fix.service
+[Unit]
+Description="Disable Transparent Hugepage before Docker boots"
+Before=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'echo never > /sys/kernel/mm/transparent_hugepage/enabled'
+ExecStart=/bin/bash -c 'echo never > /sys/kernel/mm/transparent_hugepage/defrag'
+
+[Install]
+RequiredBy=docker.service
+EOF
+systemctl daemon-reload
+systemctl enable docker-hugepage-fix
+
+
 ## Docker-ce
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 add-apt-repository "deb [arch=$(dpkg-architecture -q DEB_BUILD_ARCH)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
