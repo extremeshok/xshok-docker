@@ -81,5 +81,5 @@ WantedBy=multi-user.target
 EOF
 
 echo "Created: /etc/systemd/system/docker-${thisname}.service"
-
+systemctl daemon-reload
 systemctl enable docker-${thisname}
