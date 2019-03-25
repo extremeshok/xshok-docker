@@ -220,6 +220,10 @@ APT::Periodic::Unattended-Upgrade "1";
 APT::Periodic::AutocleanInterval "7";
 APT::Periodic::Unattended-Upgrade "1";
 EOF
+# Enable Update Origins
+sed -i 's|\/\/.*"\${distro_id}:\${distro_codename}"|"\${distro_id}:\${distro_codename}"|' /etc/apt/apt.conf.d/50unattended-upgrades
+sed -i 's|\/\/.*"\${distro_id}:\${distro_codename}-security"|"\${distro_id}:\${distro_codename}-security"|' /etc/apt/apt.conf.d/50unattended-upgrades
+sed -i 's|\/\/.*"\${distro_id}:\${distro_codename}-updates"|"\${distro_id}:\${distro_codename}-updates"|' /etc/apt/apt.conf.d/50unattended-upgrades
 
 ## Enable TCP BBR congestion control
 cat <<EOF > /etc/sysctl.d/10-kernel-bbr.conf
