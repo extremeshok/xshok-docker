@@ -49,3 +49,15 @@ Starts your docker-compose based containers properly
 wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-init-docker.sh -O xshok-init-docker.sh && chmod +x xshok-init-docker.sh
 bash xshok-init-docker.sh
 ```
+
+## Creates a systemd service to start/stop docker-compose.yml  (xshok-add-systemd-service.sh)
+Creates a systemd service to start / stop your docker-compose
+* On Start: Forces recreation of all containers and will build required containers
+* On Stop: Stops all running containers, Removes any orphaned containers
+
+### NOTES:
+*  Script must be placed into the same directory as the docker-compose.yml
+```
+wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-add-systemd-service.sh -O xshok-add-systemd-service.sh && chmod +x xshok-add-systemd-service.sh
+bash xshok-add-systemd-service.sh
+```
