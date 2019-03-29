@@ -157,10 +157,6 @@ if [ "${SWAPFILE_SIZE}" != "0" ] ; then
   swapon --show
 fi
 
-## Bugfix: high swap usage with low memory usage
-echo "vm.swappiness=10" >> /etc/sysctl.conf
-sysctl -p
-
 ## Pretty MOTD BANNER
 if [ -z "${NO_MOTD_BANNER}" ] ; then
   if [ ! -f "/etc/update-motd.d/99-extremeshok" ] ; then
@@ -195,13 +191,6 @@ root soft     nofile         256000
 root hard     nofile         256000
 EOF
 
-## Increase kernel max Key limit
-cat <<EOF > /etc/sysctl.d/60-maxkeys.conf
-# eXtremeSHOK.com
-# Increase kernel max Key limit
-kernel.keys.root_maxkeys=1000000
-kernel.keys.maxkeys=1000000
-EOF
 
 ## Set systemd ulimits
 echo "DefaultLimitNOFILE=256000" >> /etc/systemd/system.conf
@@ -225,13 +214,112 @@ sed -i 's|\/\/.*"\${distro_id}:\${distro_codename}"|"\${distro_id}:\${distro_cod
 sed -i 's|\/\/.*"\${distro_id}:\${distro_codename}-security"|"\${distro_id}:\${distro_codename}-security"|' /etc/apt/apt.conf.d/50unattended-upgrades
 sed -i 's|\/\/.*"\${distro_id}:\${distro_codename}-updates"|"\${distro_id}:\${distro_codename}-updates"|' /etc/apt/apt.conf.d/50unattended-upgrades
 
+
+## Increase kernel max Key limit
+cat <<EOF > /etc/sysctl.d/99-xs-maxkeys.conf
+# eXtremeSHOK.com
+# Increase kernel max Key limit
+kernel.keys.root_maxkeys=1000000
+kernel.keys.maxkeys=1000000
+EOF
+
 ## Enable TCP BBR congestion control
-cat <<EOF > /etc/sysctl.d/10-kernel-bbr.conf
+cat <<EOF > /etc/sysctl.d/99-xs-kernel-bbr.conf
 # eXtremeSHOK.com
 # TCP BBR congestion control
 net.core.default_qdisc=fq
 net.ipv4.tcp_congestion_control=bbr
 EOF
+
+## Memory Optimising
+cat <<EOF > /etc/sysctl.d/99-xs-memory.conf
+# eXtremeSHOK.com
+# Memory Optimising
+vm.min_free_kbytes=65536
+vm.nr_hugepages=72
+# (Redis/MongoDB)
+vm.overcommit_memory = 1
+EOF
+
+## Enable IPv6
+cat <<EOF > /etc/sysctl.d/99-xs-ipv6.conf
+# eXtremeSHOK.com
+# Enable IPv6
+net.ipv6.conf.all.disable_ipv6 = 0
+net.ipv6.conf.default.disable_ipv6 = 0
+EOF
+
+## TCP fastopen
+cat <<EOF > /etc/sysctl.d/99-xs-tcp-fastopen.conf
+# eXtremeSHOK.com
+# TCP fastopen
+net.ipv4.tcp_fastopen=3
+EOF
+
+## Bugfix: high swap usage with low memory usage
+cat <<EOF > /etc/sysctl.d/99-xs-swappiness.conf
+# eXtremeSHOK.com
+# Bugfix: high swap usage with low memory usage
+vm.swappiness=10
+EOF
+
+## FS Optimising
+cat <<EOF > /etc/sysctl.d/99-xs-tcp-fastopen.conf
+# eXtremeSHOK.com
+# FS Optimising
+fs.nr_open=12000000
+fs.file-max=9000000
+EOF
+
+## Net optimising
+cat <<EOF > /etc/sysctl.d/99-xs-net.conf
+# eXtremeSHOK.com
+net.core.netdev_max_backlog=8192
+net.core.optmem_max=8192
+net.core.rmem_max=16777216
+net.core.somaxconn=8151
+net.core.wmem_max=16777216
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.all.log_martians = 1
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.all.secure_redirects = 0
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.conf.default.log_martians = 1
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.default.secure_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+net.ipv4.icmp_ignore_bogus_error_responses = 1
+net.ipv4.ip_local_port_range=1024 65535
+net.ipv4.tcp_base_mss = 1024
+net.ipv4.tcp_challenge_ack_limit = 999999999
+net.ipv4.tcp_fin_timeout=10
+net.ipv4.tcp_keepalive_intvl=30
+net.ipv4.tcp_keepalive_probes=3
+net.ipv4.tcp_keepalive_time=240
+net.ipv4.tcp_limit_output_bytes=65536
+net.ipv4.tcp_max_syn_backlog=8192
+net.ipv4.tcp_max_tw_buckets = 1440000
+net.ipv4.tcp_mtu_probing = 1
+net.ipv4.tcp_rfc1337=1
+net.ipv4.tcp_rmem=8192 87380 16777216
+net.ipv4.tcp_sack=1
+net.ipv4.tcp_slow_start_after_idle=0
+net.ipv4.tcp_syn_retries=3
+net.ipv4.tcp_synack_retries = 2
+net.ipv4.tcp_tw_recycle = 0
+net.ipv4.tcp_tw_reuse = 0
+net.ipv4.tcp_wmem=8192 65536 16777216
+net.netfilter.nf_conntrack_generic_timeout = 60
+net.netfilter.nf_conntrack_helper=0
+net.netfilter.nf_conntrack_max = 524288
+net.netfilter.nf_conntrack_tcp_timeout_established = 28800
+net.unix.max_dgram_qlen = 4096
+EOF
+
 
 ## Disable Transparent Hugepage, required for mongodb, redis
 cat <<EOF > /etc/systemd/system/docker-hugepage-fix.service
