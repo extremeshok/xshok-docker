@@ -177,7 +177,13 @@ fi
 # BUG FIX : No space left on device
 echo 1048576 > /proc/sys/fs/inotify/max_user_watches
 echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
+
+## Set max map count, required for elasticsearch
+echo "vm.max_map_count=262144" >> /etc/sysctl.conf
+
+## Apply sysctl.conf
 sysctl -p /etc/sysctl.conf
+
 ## Increase max FD limit / ulimit
 cat <<'EOF' >> /etc/security/limits.conf
 # eXtremeSHOK.com Increase max FD limit / ulimit
