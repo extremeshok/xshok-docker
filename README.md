@@ -51,11 +51,23 @@ wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-ini
 bash xshok-init-docker.sh
 ```
 
+## Docker Cleaning / Stop docker-compose.yml (xshok-clean-docker.sh)
+Stops your docker-compose based containers properly
+* Stops all running containers
+* Removes any orphaned containers amd images
+
+### NOTES:
+*  Script must be placed into the same directory as the docker-compose.yml
+```
+wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-clean-docker.sh -O xshok-clean-docker.sh && chmod +x xshok-clean-docker.sh
+bash xshok-clean-docker.sh
+```
+
 ## Creates a systemd service to start/stop docker-compose.yml  (xshok-add-systemd-service.sh)
 Creates a systemd service to start / stop your docker-compose
 * On Start: Forces recreation of all containers and will build required containers
 * On Stop: Stops all running containers, Removes any orphaned containers
-
+* On Reload: quickest, docker-compose stop and start
 ### NOTES:
 *  Script must be placed into the same directory as the docker-compose.yml
 ```
