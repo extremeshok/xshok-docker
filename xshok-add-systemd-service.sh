@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ################################################################################
 # This is property of eXtremeSHOK.com
 # You are free to use, modify and distribute, however you may not remove this notice.
@@ -79,13 +79,13 @@ else
   echo "ExecStart=/usr/local/bin/docker-compose up -d --force-recreate --build" >> "/etc/systemd/system/docker-${thisname}.service"
 fi
 
-echo "ExecReload=/usr/local/bin/docker-compose stop && /usr/local/bin/docker-compose start" >> "/etc/systemd/system/docker-${thisname}.service"
-
-if [ -f xshok-clean-docker.sh ] ; then
-  echo "ExecStop=/bin/bash ${dirname}/xshok-clean-docker.sh" >> "/etc/systemd/system/docker-${thisname}.service"
-else
-  echo "ExecStop=/usr/local/bin/docker-compose down --remove-orphans" >> "/etc/systemd/system/docker-${thisname}.service"
-fi
+#echo "ExecReload=/usr/local/bin/docker-compose stop && /usr/local/bin/docker-compose start" >> "/etc/systemd/system/docker-${thisname}.service"
+#
+# if [ -f xshok-clean-docker.sh ] ; then
+#   echo "ExecStop=/bin/bash ${dirname}/xshok-clean-docker.sh" >> "/etc/systemd/system/docker-${thisname}.service"
+# else
+#   echo "ExecStop=/usr/local/bin/docker-compose down --remove-orphans" >> "/etc/systemd/system/docker-${thisname}.service"
+# fi
 
 echo "Created: /etc/systemd/system/docker-${thisname}.service"
 systemctl daemon-reload
@@ -93,5 +93,5 @@ systemctl enable docker-${thisname}
 
 echo "Available Commands:"
 echo "Start-> systemctl start docker-${thisname}"
-echo "Stop-> systemctl stop docker-${thisname}"
-echo "Reload-> systemctl reload docker-${thisname}"
+#echo "Stop-> systemctl stop docker-${thisname}"
+#echo "Reload-> systemctl reload docker-${thisname}"

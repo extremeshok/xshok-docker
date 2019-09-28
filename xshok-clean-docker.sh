@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ################################################################################
 # This is property of eXtremeSHOK.com
 # You are free to use, modify and distribute, however you may not remove this notice.
@@ -32,6 +32,15 @@
 #    THERE ARE NO USER CONFIGURABLE OPTIONS IN THIS SCRIPT
 #
 ################################################################################
+
+dirname="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd "${dirname}" || exit 1
+
+if [ ! -f "docker-compose.yml" ] ; then
+  echo "ERROR: docker-compose.yml not found, script must be run in the same directory"
+  exit 1
+fi
+docker-compose down --remove-orphans
 
 echo "Stopping all containers"
 docker stop $(docker ps -q)

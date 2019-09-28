@@ -53,28 +53,28 @@ apt-get update > /dev/null 2>&1
 
 ## Install common system utilities
 /usr/bin/env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' install \
-aptitude \
 apt-transport-https \
+aptitude \
 axel \
 build-essential \
 ca-certificates \
 curl \
 dialog \
 dos2unix \
+dpkg-dev \
 git \
 gnupg-agent \
 htop \
+iftop \
 iotop \
 iperf \
-iptraf \
 ipset \
-iftop \
+iptraf \
 mlocate \
 nano \
 net-tools \
 pigz \
 python3-pip \
-whois \
 software-properties-common \
 sshpass \
 tmux \
@@ -82,6 +82,7 @@ unzip zip \
 vim \
 vim-nox \
 wget
+whois \
 
 ## Remove no longer required packages and purge old cached updates
 /usr/bin/env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' autoremove
@@ -343,7 +344,6 @@ RequiredBy=docker.service
 EOF
 systemctl daemon-reload
 systemctl enable docker-hugepage-fix
-
 
 ## Docker-ce
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
