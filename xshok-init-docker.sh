@@ -44,6 +44,11 @@ if [ ! -f "docker-compose.yml" ] ; then
   exit 1
 fi
 
+# Increase the max_user_watches 
+sysctl fs.inotify.max_user_instances=524288
+sysctl fs.inotify.max_user_watches=524288
+sysctl fs.inotify.max_queued_events=524288
+
 #Automatically create required volume dirs
 volumedir_array=$(grep "device: \${PWD}/volumes/" docker-compose.yml)
 for volumedir in $volumedir_array ; do

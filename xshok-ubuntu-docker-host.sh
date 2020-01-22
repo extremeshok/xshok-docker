@@ -176,12 +176,11 @@ fi
 
 ## Increase max user watches
 # BUG FIX : No space left on device
-echo 1048576 > /proc/sys/fs/inotify/max_user_watches
-echo "fs.inotify.max_user_watches=1048576" >> /etc/sysctl.conf
-
+echo "fs.inotify.max_user_instances=524288" >> /etc/sysctl.conf
+echo "fs.inotify.max_user_watches=524288" >> /etc/sysctl.conf
+echo "fs.inotify.max_queued_events=524288" >> /etc/sysctl.conf
 ## Set max map count, required for elasticsearch
 echo "vm.max_map_count=262144" >> /etc/sysctl.conf
-
 ## Apply sysctl.conf
 sysctl -p /etc/sysctl.conf
 
@@ -344,6 +343,50 @@ RequiredBy=docker.service
 EOF
 systemctl daemon-reload
 systemctl enable docker-hugepage-fix
+
+## Ensure Entropy Pools are Populated, prevents slowdowns whilst waiting for entropy
+/usr/bin/env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' install haveged
+## Net optimising
+cat <<EOF > /etc/default/haveged
+# eXtremeSHOK.com
+#   -w sets low entropy watermark (in bits)
+DAEMON_ARGS="-w 1024"
+EOF
+systemctl daemon-reload
+systemctl enable haveged
+
+## Limit the size and optimise journald
+cat <<EOF > /etc/systemd/journald.conf
+# eXtremeSHOK.com
+[Journal]
+# Store on disk
+Storage=persistent
+# Don't split Journald logs by user
+SplitMode=none
+# Disable rate limits
+RateLimitInterval=0
+RateLimitIntervalSec=0
+RateLimitBurst=0
+# Disable Journald forwarding to syslog
+ForwardToSyslog=no
+# Journald forwarding to wall /var/log/kern.log
+ForwardToWall=yes
+# Disable signing of the logs, save cpu resources.
+Seal=no
+Compress=yes
+# Fix the log size
+SystemMaxUse=64M
+RuntimeMaxUse=60M
+# Optimise the logging and speed up tasks
+MaxLevelStore=warning
+MaxLevelSyslog=warning
+MaxLevelKMsg=warning
+MaxLevelConsole=notice
+MaxLevelWall=crit
+EOF
+systemctl restart systemd-journald.service
+journalctl --vacuum-size=64M --vacuum-time=1d;
+journalctl --rotate
 
 ## Docker-ce
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
