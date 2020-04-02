@@ -114,12 +114,13 @@ fi
 systemctl disable rpcbind
 systemctl stop rpcbind
 
-## Disable SSH password logins (security)
+## Disable SSH password logins for root user (security)
 if cat "${HOME}/.ssh/authorized_keys" | tail -n 1 | cut -d' ' -f 1 | grep -q 'ssh-' ; then
   echo "SSH authorized_keys detected, Disabling password login"
-  sed -i 's|PermitRootLogin yes|#PermitRootLogin yes|g' /etc/ssh/sshd_config
-#  sed -i 's|UsePAM yes|UsePAM no|g' /etc/ssh/sshd_config
-  sed -i 's|#PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
+  sed -i 's|#PermitRootLogin yes|PermitRootLogin without-password|g' /etc/ssh/sshd_config
+  sed -i 's|PermitRootLogin yes|PermitRootLogin without-password|g' /etc/ssh/sshd_config
+  sed -i 's|#PermitRootLogin no|PermitRootLogin without-password|g' /etc/ssh/sshd_config
+  sed -i 's|PermitRootLogin no|PermitRootLogin without-password|g' /etc/ssh/sshd_config
   sed -i 's|#HostKey /etc/|HostKey /etc/|g' /etc/ssh/sshd_config
   systemctl reload ssh
 fi
@@ -213,7 +214,6 @@ cat <<'EOF' > /etc/apt/apt.conf.d/20auto-upgrades
 APT::Periodic::Update-Package-Lists "1";
 APT::Periodic::Unattended-Upgrade "1";
 APT::Periodic::AutocleanInterval "7";
-APT::Periodic::Unattended-Upgrade "1";
 EOF
 # Enable Update Origins
 sed -i 's|\/\/.*"\${distro_id}:\${distro_codename}"|"\${distro_id}:\${distro_codename}"|' /etc/apt/apt.conf.d/50unattended-upgrades
