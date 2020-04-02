@@ -46,3 +46,6 @@ echo "Stopping all containers"
 docker stop $(docker ps -q)
 echo "Removing images, will NOT remove volumes"
 docker system prune -a -f
+
+journalctl --vacuum-size=64M --vacuum-time=2d;
+journalctl --rotate
