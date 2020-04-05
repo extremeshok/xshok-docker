@@ -406,9 +406,15 @@ curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compo
 chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
-cat /etc/update-motd.d/99-extremeshok
+##  Download eXtremeSHOK.com Docker Scripts
+if [ ! -d "/datastore" ] ; then
+  mkdir -p /datastore
+  cd /datastore || exit
+  git clone https://github.com/extremeshok/xshok-docker.git
+fi
 
 echo "eXtremeSHOK.com Optimised" > /etc/extremeshok
 
+cat /etc/update-motd.d/99-extremeshok
 ## Script Finish
 echo -e '\033[1;33m Finished....please restart the system \033[0m'
