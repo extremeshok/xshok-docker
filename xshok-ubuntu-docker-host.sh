@@ -39,6 +39,11 @@ if [ "$(lsb_release -i 2>/dev/null | cut -f 2 | xargs)" != "Ubuntu" ] ; then
   exit 1
 fi
 
+if [ -f "/etc/extremeshok" ] ; then
+  echo "Script can only be run once"
+  exit 1
+fi
+
 ## Force APT to use IPv4
 echo -e "Acquire::ForceIPv4 \"true\";\\n" > /etc/apt/apt.conf.d/99force-ipv4
 
@@ -402,6 +407,8 @@ chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 cat /etc/update-motd.d/99-extremeshok
+
+echo "eXtremeSHOK.com Optimised" > /etc/extremeshok
 
 ## Script Finish
 echo -e '\033[1;33m Finished....please restart the system \033[0m'

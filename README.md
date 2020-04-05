@@ -36,7 +36,7 @@ Turns a fresh ubuntu install into an optimised docker host
 wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-ubuntu-docker-host.sh -O xshok-ubuntu-docker-host.sh && chmod +x xshok-ubuntu-docker-host.sh && ./xshok-ubuntu-docker-host.sh
 ```
 
-## Docker Initialization / Start docker-compose.yml (xshok-init-docker.sh)
+## Docker Initialization / Start docker-compose.yml (xshok-docker-start.sh)
 Starts your docker-compose based containers properly
 * Automatically creates volume directories and touches volume files
 * Stops all running containers
@@ -51,7 +51,7 @@ wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-ini
 bash xshok-init-docker.sh
 ```
 
-## Docker Cleaning / Stop docker-compose.yml (xshok-clean-docker.sh)
+## Docker Cleaning / Stop docker-compose.yml (xshok-docker-clean.sh)
 Stops your docker-compose based containers properly
 * Stops all running containers
 * Removes any orphaned containers amd images
