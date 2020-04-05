@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 ################################################################################
 # This is property of eXtremeSHOK.com
 # You are free to use, modify and distribute, however you may not remove this notice.
@@ -73,8 +73,8 @@ Type=oneshot
 WorkingDirectory=${dirname}
 EOF
 
-if [ -f xshok-init-docker.sh ] ; then
-  echo "ExecStart=/bin/bash ${dirname}/xshok-init-docker.sh" >> "/etc/systemd/system/docker-${thisname}.service"
+if [ -f xshok-docker-start.sh ] ; then
+  echo "ExecStart=/bin/bash ${dirname}/xshok-docker-start.sh" >> "/etc/systemd/system/docker-${thisname}.service"
 else
   echo "ExecStart=/usr/local/bin/docker-compose up -d --force-recreate --build" >> "/etc/systemd/system/docker-${thisname}.service"
 fi
