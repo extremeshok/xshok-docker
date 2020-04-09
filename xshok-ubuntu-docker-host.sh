@@ -129,6 +129,8 @@ if cat "${HOME}/.ssh/authorized_keys" | tail -n 1 | cut -d' ' -f 1 | grep -q 'ss
   sed -i 's|#HostKey /etc/|HostKey /etc/|g' /etc/ssh/sshd_config
   sed -i 's|#UseDNS yes|UseDNS no|g' /etc/ssh/sshd_config
   sed -i 's|UseDNS yes|UseDNS no|g' /etc/ssh/sshd_config
+  sed -i 's|#MaxAuthTries 6|MaxAuthTries 3|g' /etc/ssh/sshd_config
+  sed -i 's|MaxAuthTries 6|#MaxAuthTries 3|g' /etc/ssh/sshd_config
   systemctl reload ssh
 fi
 
