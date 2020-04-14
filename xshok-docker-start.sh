@@ -45,6 +45,11 @@ if [ ! -f "docker-compose.yml" ] ; then
   exit 1
 fi
 
+if ! docker-compose config > /dev/null ; then
+  echo "ERROR: docker-compose.yml failed config check"
+  exit 1
+fi
+
 #Automatically create required volume dirs
 volumedir_array=$(grep "device: \${PWD}/volumes/" docker-compose.yml)
 for volumedir in $volumedir_array ; do
