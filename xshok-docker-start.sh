@@ -36,9 +36,9 @@
 #
 ################################################################################
 
-dirname="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd "${dirname}" || exit 1
-echo "$dirname"
+DIRNAME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd "${DIRNAME}" || exit 1
+echo "${DIRNAME}"
 
 if [ ! -f "docker-compose.yml" ] ; then
   echo "ERROR: docker-compose.yml not found, script must be run in the same directory"
@@ -51,22 +51,27 @@ if ! docker-compose config > /dev/null ; then
 fi
 
 #Automatically create required volume dirs
-volumedir_array=$(grep "device: \${PWD}/volumes/" docker-compose.yml)
-for volumedir in $volumedir_array ; do
-  if [[ $volumedir =~ "\${PWD}" ]]; then
-    volumedir="${volumedir/\$\{PWD\}\//}"
-    if [ ! -d "$volumedir" ] ; then
-      if [ ! -f "$volumedir" ] && [[ $volumedir != *.* ]] ; then
-        echo "Creating dir: $volumedir"
-        mkdir -p "$volumedir"
-        chmod 777 "$volumedir"
-      elif [ ! -d "$volumedir" ] && [[ $volumedir == *.* ]] ; then
-        echo "Creating file: $volumedir"
-        touch -p "$volumedir"
+
+## remove all comments
+TEMP_COMPOSE="/tmp/xs_$(date +"%s")"
+sed -e '1{/^#!/ {p}}; /^[\t\ ]*#/d;/\.*#.*/ {/[\x22\x27].*#.*[\x22\x27]/ !{:regular_loop s/\(.*\)*[^\]#.*/\1/;t regular_loop}; /[\x22\x27].*#.*[\x22\x27]/ {:special_loop s/\([\x22\x27].*#.*[^\x22\x27]\)#.*/\1/;t special_loop}; /\\#/ {:second_special_loop s/\(.*\\#.*[^\]\)#.*/\1/;t second_special_loop}}' docker-compose.yml > "$TEMP_COMPOSE"
+VOLUMEDIR_ARRAY=$(grep "device: \${PWD}/volumes/" "$TEMP_COMPOSE")
+for VOLUMEDIR in $VOLUMEDIR_ARRAY ; do
+  if [[ $VOLUMEDIR =~ "\${PWD}" ]]; then
+    VOLUMEDIR="${VOLUMEDIR/\$\{PWD\}\//}"
+    if [ ! -d "$VOLUMEDIR" ] ; then
+      if [ ! -f "$VOLUMEDIR" ] && [[ $VOLUMEDIR != *.* ]] ; then
+        echo "Creating dir: $VOLUMEDIR"
+        mkdir -p "$VOLUMEDIR"
+        chmod 777 "$VOLUMEDIR"
+      elif [ ! -d "$VOLUMEDIR" ] && [[ $VOLUMEDIR == *.* ]] ; then
+        echo "Creating file: $VOLUMEDIR"
+        touch -p "$VOLUMEDIR"
       fi
     fi
   fi
 done
+rm -f "$TEMP_COMPOSE"
 
 docker-compose down --remove-orphans
 # detect if there are any running containers and manually stop and remove them
