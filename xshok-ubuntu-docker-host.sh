@@ -408,11 +408,11 @@ curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compo
 chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
-##  Download eXtremeSHOK.com Docker Scripts
+##  Download eXtremeSHOK.com Docker
 if [ ! -d "/datastore" ] ; then
   mkdir -p /datastore
   cd /datastore || exit
-  git clone https://github.com/extremeshok/xshok-docker.git
+  wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-docker.sh -O /datastore/xshok-docker.sh && chmod +x /datastore/xshok-docker.sh
 fi
 
 echo "eXtremeSHOK.com Optimised" > /etc/extremeshok

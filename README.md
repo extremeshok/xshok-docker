@@ -36,7 +36,34 @@ Turns a fresh ubuntu install into an optimised docker host
 wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-ubuntu-docker-host.sh -O xshok-ubuntu-docker-host.sh && chmod +x xshok-ubuntu-docker-host.sh && ./xshok-ubuntu-docker-host.sh
 ```
 
-## Docker Initialization / Start docker-compose.yml (xshok-docker-start.sh)
+# xshok-docker.sh  (single script replaces all separate scripts)
+```
+eXtremeSHOK.com Docker
+DOCKER OPTIONS
+   -u | --up | --start | --init
+       start docker-compose.yml
+   -d | --down | --stop
+       stop all dockers and docker-compose
+   -r | --restart | --updown | --up-down
+       quickly restart docker-compose
+   -p | --prune | --clean
+       stop and remove dockers, will NOT remove volumes
+ADVANCED OPTIONS
+   -b | --boot | --service | --systemd
+       creates a systemd service to start docker and run docker-compose.yml on boot
+   -v | --vis | --visuliser
+       make pretty images of the docker-compose topology
+GENERAL OPTIONS
+   -H, --help
+      Display help and exit.
+```
+### NOTES:
+*  Script must be placed into the same directory as the docker-compose.yml
+```
+wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-docker.sh -O xshok-docker.sh && chmod +x xshok-docker.sh
+bash xshok-docker.sh
+```
+## Docker Initialization / Start docker-compose.yml (xshok-docker.sh --start)
 Starts your docker-compose based containers properly
 * Automatically creates volume directories and touches volume files
 * Stops all running containers
@@ -44,33 +71,13 @@ Starts your docker-compose based containers properly
 * Pull/download dependencies and images
 * Forces recreation of all containers and will build required containers
 
-### NOTES:
-*  Script must be placed into the same directory as the docker-compose.yml
-```
-wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-init-docker.sh -O xshok-init-docker.sh && chmod +x xshok-init-docker.sh
-bash xshok-init-docker.sh
-```
-
-## Docker Cleaning / Stop docker-compose.yml (xshok-docker-clean.sh)
+## Docker Cleaning / Stop docker-compose.yml (xshok-docker.sh --clean)
 Stops your docker-compose based containers properly
 * Stops all running containers
 * Removes any orphaned containers amd images
 
-### NOTES:
-*  Script must be placed into the same directory as the docker-compose.yml
-```
-wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-clean-docker.sh -O xshok-clean-docker.sh && chmod +x xshok-clean-docker.sh
-bash xshok-clean-docker.sh
-```
-
-## Creates a systemd service to start/stop docker-compose.yml  (xshok-add-systemd-service.sh)
+## Creates a systemd service to start/stop docker-compose.yml  (xshok-docker.sh --boot)
 Creates a systemd service to start / stop your docker-compose
 * On Start: Forces recreation of all containers and will build required containers
 * On Stop: Stops all running containers, Removes any orphaned containers
 * On Reload: quickest, docker-compose stop and start
-### NOTES:
-*  Script must be placed into the same directory as the docker-compose.yml
-```
-wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-add-systemd-service.sh -O xshok-add-systemd-service.sh && chmod +x xshok-add-systemd-service.sh
-bash xshok-add-systemd-service.sh
-```
