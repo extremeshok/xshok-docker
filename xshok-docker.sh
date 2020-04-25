@@ -48,9 +48,7 @@ cd "${DIRNAME}" || exit 1
 
 ################# SUPPORTING FUNCTIONS :: START
 
-
 ################# SUPPORTING FUNCTIONS  :: END
-
 
 ################# XSHOK FUNCTIONS  :: START
 
@@ -137,7 +135,6 @@ xshok_docker_boot(){
   # remove .
   THISNAME="${THISNAME//\.}"
 
-
   echo "Generating Systemd service"
   cat << EOF > "/etc/systemd/system/docker-${THISNAME}.service"
 [Unit]
@@ -214,9 +211,7 @@ xshok_docker_maintenance(){
   df -h /
 }
 
-
 ################# XSHOK ADVANCED FUNCTIONS  :: END
-
 
 echo "eXtremeSHOK.com Docker"
 
