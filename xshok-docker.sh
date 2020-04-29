@@ -147,6 +147,8 @@ WantedBy=multi-user.target
 
 [Service]
 Type=oneshot
+TimeoutStartSec=0
+RemainAfterExit=yes
 WorkingDirectory=${DIRNAME}
 EOF
 
