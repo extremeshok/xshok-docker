@@ -27,6 +27,8 @@ Turns a fresh ubuntu install into an optimised docker host
 * Install Docker-compose
 * Enable TCP BBR congestion control, improves overall network throughput
 * Disable Transparent Hugepage before Docker boots
+* Borgmatic and Borgbase installed via python3 pip
+* Sample borgmatic config installed at /etc/borgmatic/config.yaml
 
 ### Notes:
 * to disable the MOTD banner, set the env NO_MOTD_BANNER to true (export NO_MOTD_BANNER=true)

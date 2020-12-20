@@ -86,8 +86,8 @@ tmux \
 unzip zip \
 vim \
 vim-nox \
-wget
-whois \
+wget \
+whois
 
 ## Remove no longer required packages and purge old cached updates
 /usr/bin/env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' autoremove
@@ -397,6 +397,58 @@ systemctl restart systemd-journald.service
 journalctl --vacuum-size=64M --vacuum-time=1d;
 journalctl --rotate
 
+## Install Borgbackup and Borgmatic via python3 pip
+pip3 install borgbackup borgmatic
+#Borgmatic sample config
+cat <<EOF > /etc/borgmatic/config.yaml
+# eXtremeSHOK.com
+# Where to look for files to backup, and where to store those backups. See
+# https://borgbackup.readthedocs.io/en/stable/quickstart.html and
+# https://borgbackup.readthedocs.io/en/stable/usage.html#borg-create for details.
+location:
+    source_directories:
+        - /datastore
+        - /etc
+
+    repositories:
+        - STORAGE@AT.LOCATION.COM:repo
+
+    exclude_patterns:
+        - '*.pyc'
+        - ~/*/.git
+
+    exclude_caches: true
+
+    exclude_if_present:
+        - .nobackup
+
+storage:
+    compression: auto,zstd
+    encryption_passphrase: 'YOUR-ENCRYPTION-PASSPHRASE-HERE'
+    archive_name_format: '{hostname}-{now}'
+
+retention:
+    keep_hourly: 24
+    keep_daily: 7
+    keep_weekly: 4
+    keep_monthly: 6
+    keep_yearly: 0
+    prefix: '{hostname}-'
+
+consistency:
+    checks:
+        - disabled
+    check_last: 3
+    prefix: '{hostname}-'
+
+hooks:
+    before_backup:
+        - echo "`date` - Starting backup"
+    after_backup:
+        - echo "`date` - Finished backup"
+EOF
+echo "Sample borgmatic config installed at : /etc/borgmatic/config.yaml"
+
 ## Docker-ce
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 add-apt-repository "deb [arch=$(dpkg-architecture -q DEB_BUILD_ARCH)] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
@@ -404,7 +456,7 @@ apt-get update > /dev/null 2>&1
 /usr/bin/env DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' install docker-ce docker-ce-cli containerd.io
 
 ## Docker-compose
-curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
