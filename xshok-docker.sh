@@ -37,7 +37,6 @@
 ################################################################################
 
 PWD="/datastore"
-VOLUMES="${PWD}/volumes"
 EPACE='   '
 
 source "${PWD}/.env"
@@ -164,7 +163,7 @@ EOF
 
   echo "Created: /etc/systemd/system/docker-${THISNAME}.service"
   systemctl daemon-reload
-  systemctl enable docker-${THISNAME}
+  systemctl enable "docker-${THISNAME}"
 
   echo "Available Commands:"
   echo "Start-> systemctl start docker-${THISNAME}"
@@ -219,22 +218,24 @@ echo "eXtremeSHOK.com Docker"
 
 help_message(){
   echo -e "\033[1mDOCKER OPTIONS\033[0m"
-  echo "${EPACE}-u | --up | --start | --init"
   echo "${EPACE}${EPACE} start docker-compose.yml"
-  echo "${EPACE}-d | --down | --stop"
+  echo "${EPACE}-u | --up | --start | --init"
   echo "${EPACE}${EPACE} stop all dockers and docker-compose"
-  echo "${EPACE}-r | --restart | --updown | --up-down | --reload"
+  echo "${EPACE}-d | --down | --stop"
   echo "${EPACE}${EPACE} quickly restart docker-compose"
-  echo "${EPACE}-p | --prune | --clean"
+  echo "${EPACE}-r | --restart | --quickupdown | --quick-up-down | --reload"
+  echo "${EPACE}${EPACE} reset docker-compose (down and then up)"
+  echo "${EPACE}-R | --reset | --updown | --up-down"
   echo "${EPACE}${EPACE} stop and remove dockers, will NOT remove volumes"
+  echo "${EPACE}-p | --prune | --clean"
   echo -e "\033[1mADVANCED OPTIONS\033[0m"
-  echo "${EPACE}-b | --boot | --service | --systemd"
   echo "${EPACE}${EPACE} creates a systemd service to start docker and run docker-compose.yml on boot"
-  echo "${EPACE}-v | --vis | --visuliser"
+  echo "${EPACE}-b | --boot | --service | --systemd"
   echo "${EPACE}${EPACE} make pretty images of the docker-compose topology"
+  echo "${EPACE}-v | --vis | --visuliser"
   echo -e "\033[1mGENERAL OPTIONS\033[0m"
-  echo "${EPACE}-H, --help"
   echo "${EPACE}${EPACE}Display help and exit."
+  echo "${EPACE}-H, --help"
 }
 
 if [ -z "${1}" ]; then
@@ -264,8 +265,12 @@ while [ ! -z "${1}" ]; do
     -d | --down | --stop )
       xshok_docker_down
       ;;
-    -r | --restart | --updown | --up-down )
+    -r | --restart | --quickupdown | --quick-up-down | --reload )
       xshok_docker_restart
+      ;;
+    -R | --reset | --updown | --up-down )
+      xshok_docker_down
+      xshok_docker_up
       ;;
     -p | --prune | --clean | --purge )
       xshok_docker_down
@@ -281,12 +286,6 @@ while [ ! -z "${1}" ]; do
     -m | --maintenance )
       xshok_docker_maintenance
       ;;
-      # -d | --disable )
-      #   xshok_disable
-      #   ;;
-      # -e | --enable )
-      #   xshok_enable
-      #   ;;
     *)
       help_message
       ;;

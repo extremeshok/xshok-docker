@@ -42,22 +42,24 @@ wget https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-ubu
 ```
 eXtremeSHOK.com Docker
 DOCKER OPTIONS
-   -u | --up | --start | --init
        start docker-compose.yml
-   -d | --down | --stop
+   -u | --up | --start | --init
        stop all dockers and docker-compose
-   -r | --restart | --updown | --up-down
+   -d | --down | --stop
        quickly restart docker-compose
-   -p | --prune | --clean
+   -r | --restart | --quickupdown | --quick-up-down | --reload
+       reset docker-compose (down and then up)
+   -R | --reset | --updown | --up-down
        stop and remove dockers, will NOT remove volumes
+   -p | --prune | --clean
 ADVANCED OPTIONS
-   -b | --boot | --service | --systemd
        creates a systemd service to start docker and run docker-compose.yml on boot
-   -v | --vis | --visuliser
+   -b | --boot | --service | --systemd
        make pretty images of the docker-compose topology
+   -v | --vis | --visuliser
 GENERAL OPTIONS
-   -H, --help
       Display help and exit.
+   -H, --help
 ```
 ### NOTES:
 *  Script must be placed into the same directory as the docker-compose.yml
