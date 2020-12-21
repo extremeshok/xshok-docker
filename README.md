@@ -58,8 +58,10 @@ ADVANCED OPTIONS
        make pretty images of the docker-compose topology
    -v | --vis | --visuliser
 GENERAL OPTIONS
-      Display help and exit.
+    --upgrade
+       upgrades the script to the latest version
    -H, --help
+       Display help and exit.
 ```
 ### NOTES:
 *  Script must be placed into the same directory as the docker-compose.yml

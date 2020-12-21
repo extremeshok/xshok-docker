@@ -51,6 +51,16 @@ script_version_date="2020-12-21"
 
 ################# SUPPORTING FUNCTIONS :: START
 
+# Check if the current running user is the root user, otherwise return false
+function xshok_is_root() {
+    id_bin="$(command -v id 2> /dev/null)"
+    if [ "$($id_bin -u)" == 0 ] ; then
+        return 0
+    else
+        return 1 # Not root
+    fi
+}
+
 ################# SUPPORTING FUNCTIONS  :: END
 
 ################# XSHOK FUNCTIONS  :: START
@@ -149,7 +159,7 @@ After=docker.service
 WantedBy=multi-user.target
 
 [Service]
-Type=oneshot
+Type=forking
 TimeoutStartSec=0
 RemainAfterExit=yes
 WorkingDirectory=${DIRNAME}
@@ -312,26 +322,26 @@ echo "eXtremeSHOK.com Docker ${script_version} (${script_version_date})"
 
 help_message(){
     echo -e "\033[1mDOCKER OPTIONS\033[0m"
-    echo "${EPACE}${EPACE} start docker-compose.yml"
     echo "${EPACE}-u | --up | --start | --init"
-    echo "${EPACE}${EPACE} stop all dockers and d cker-compose"
+    echo "${EPACE}${EPACE} start docker-compose.yml"
     echo "${EPACE}-d | --down | --stop"
-    echo "${EPACE}${EPACE} quickly restart docker-compose"
+    echo "${EPACE}${EPACE} stop all dockers and d cker-compose"
     echo "${EPACE}-r | --restart | --quickupdown | --quick-up-down | --reload"
-    echo "${EPACE}${EPACE} reset docker-compose (down and then up)"
+    echo "${EPACE}${EPACE} quickly restart docker-compose"
     echo "${EPACE}-R | --reset | --updown | --up-down"
-    echo "${EPACE}${EPACE} stop and remove dockers, will NOT remove volumes"
+    echo "${EPACE}${EPACE} reset docker-compose (down and then up)"
     echo "${EPACE}-p | --prune | --clean"
+    echo "${EPACE}${EPACE} stop and remove dockers, will NOT remove volumes"
     echo -e "\033[1mADVANCED OPTIONS\033[0m"
-    echo "${EPACE}${EPACE} creates a systemd service to start docker and run docker-compose.yml on boot"
     echo "${EPACE}-b | --boot | --service | --systemd"
-    echo "${EPACE}${EPACE} make pretty images of the docker-compose topology"
+    echo "${EPACE}${EPACE} creates a systemd service to start docker and run docker-compose.yml on boot"
     echo "${EPACE}-v | --vis | --visuliser"
+    echo "${EPACE}${EPACE} make pretty images of the docker-compose topology"
     echo -e "\033[1mGENERAL OPTIONS\033[0m"
-    echo "${EPACE}${EPACE}Display help and exit."
     echo "${EPACE}--upgrade"
     echo "${EPACE}${EPACE} upgrades the script to the latest version"
     echo "${EPACE}-H, --help"
+    echo "${EPACE}${EPACE}Display help and exit."
 }
 
 if [ -z "${1}" ]; then
@@ -340,7 +350,7 @@ if [ -z "${1}" ]; then
     exit 1
 fi
 
-## VALIDATION
+# VALIDATION
 if [ ! -f "docker-compose.yml" ] ; then
     echo "ERROR: docker-compose.yml not found, script must be run in the same directory"
     exit 1
