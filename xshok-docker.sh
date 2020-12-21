@@ -45,6 +45,10 @@ source "${PWD}/.env"
 DIRNAME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd "${DIRNAME}" || exit 1
 
+################# Script Info
+script_version="1.2"
+script_version_date="2020-12-21"
+
 ################# SUPPORTING FUNCTIONS :: START
 
 ################# SUPPORTING FUNCTIONS  :: END
@@ -212,15 +216,105 @@ xshok_docker_maintenance(){
   df -h /
 }
 
+# Check for a new version
+function check_new_version() {
+    found_upgrade="no"
+    # shellcheck disable=SC2086
+    latest_version="$(curl --compressed --connect-timeout "30" --remote-time --location --retry "3" --max-time "30" "https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-docker.sh" 2> /dev/null | grep "^script_version=" | head -n1 | cut -d '"' -f 2)"
+    if [ "$latest_version" != "" ] ; then
+        # shellcheck disable=SC2183,SC2086
+        if [ "$(printf "%02d%02d%02d%02d" ${latest_version//./ })" -gt "$(printf "%02d%02d%02d%02d" ${script_version//./ })" ] ; then
+            echo "------------------------------"
+            echo "ALERT: New version : v${latest_version} @ https://github.com/extremeshok/docker-webserver"
+            found_upgrade="yes"
+        fi
+    fi
+
+    if [ "$found_upgrade" == "yes" ] ; then
+        echo "Quickly upgrade, run the following command as root:"
+        echo "bash xshok-admin.sh --upgrade"
+    fi
+
+}
+
+
+# Auto upgrade the master.conf and the
+function xshok_upgrade() {
+
+    if ! xshok_is_root ; then
+        echo "ERROR: Only root can run the upgrade"
+        exit 1
+    fi
+
+    echo "Checking for updates ..."
+
+    found_upgrade="no"
+    latest_version="$(curl --compressed  --connect-timeout "30" --remote-time --location --retry "3" --max-time "30" "https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-docker.sh" 2> /dev/null | grep "^script_version=" | head -n1 | cut -d '"' -f 2)"
+
+    if [ "$latest_version" != "" ] ; then
+        # shellcheck disable=SC2183,SC2086
+        if [ "$(printf "%02d%02d%02d%02d" ${latest_version//./ })" -gt "$(printf "%02d%02d%02d%02d" ${script_version//./ })" ] ; then
+            found_upgrade="yes"
+            echo "ALERT:  Upgrading script from v${script_version} to v${latest_version}"
+            echo "Downloading https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-docker.sh"
+
+            curl --fail --compressed --connect-timeout "30" --remote-time --location --retry "3" --max-time "30" --time-cond "${DIRNAME}/xshok-docker.sh.tmp" --output "${DIRNAME}/xshok-docker.sh.tmp"  "https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-docker.sh"  2> /dev/null
+            ret=$?
+            if [ "$ret" -ne 0 ] ; then
+                echo "ERROR: Could not download https://raw.githubusercontent.com/extremeshok/xshok-docker/master/xshok-docker.sh"
+                exit 1
+            fi
+            # Detect to make sure the entire script is avilable, fail if the script is missing contents
+            if [ "$(tail -n 1 "${DIRNAME}/xshok-docker.sh.tmp" | head -n 1 | cut -c 1-7)" != "exit \$?" ] ; then
+                echo "ERROR: Downloaded xshok-admin.sh is incomplete, please re-run"
+                exit 1
+            fi
+            # Copy over permissions from old version
+            OCTAL_MODE="$(stat -c "%a" "${DIRNAME}/xshok-docker.sh")"
+
+            echo "Inserting update process..."
+            # Generate the update script
+            cat > "/datastore/xshok_update_script.sh" << EOF
+#!/usr/bin/env bash
+echo "Running update process"
+# Overwrite old file with new
+if ! mv -f "${DIRNAME}/xshok-docker.sh.tmp" "${DIRNAME}/xshok-docker.sh" ; then
+  echo  "ERROR: failed moving ${DIRNAME}/xshok-docker.sh.tmp to ${DIRNAME}/xshok-docker.sh"
+  rm -f \$0
+    exit 1
+fi
+if ! chmod "$OCTAL_MODE" "${DIRNAME}/xshok-docker.sh" ; then
+     echo "ERROR: unable to set permissions on ${DIRNAME}/xshok-docker.sh"
+     rm -f \$0
+     exit 1
+fi
+    echo "Completed"
+
+    #remove the tmp script before exit
+    rm -f \$0
+EOF
+            # Replaced with $0, so code will update and then call itself with the same parameters it had
+            #exec "${0}" "$@"
+            bash_bin="$(command -v bash 2> /dev/null)"
+            exec "$bash_bin" "/datastore/xshok_update_script.sh"
+            echo "Running once as root"
+        fi
+    fi
+
+    if [ "$found_upgrade" == "no" ] ; then
+        echo "No updates available"
+    fi
+}
+
 ################# XSHOK ADVANCED FUNCTIONS  :: END
 
-echo "eXtremeSHOK.com Docker"
+echo "eXtremeSHOK.com Docker ${script_version} (${script_version_date})"
 
 help_message(){
   echo -e "\033[1mDOCKER OPTIONS\033[0m"
   echo "${EPACE}${EPACE} start docker-compose.yml"
   echo "${EPACE}-u | --up | --start | --init"
-  echo "${EPACE}${EPACE} stop all dockers and docker-compose"
+  echo "${EPACE}${EPACE} stop all dockers and d cker-compose"
   echo "${EPACE}-d | --down | --stop"
   echo "${EPACE}${EPACE} quickly restart docker-compose"
   echo "${EPACE}-r | --restart | --quickupdown | --quick-up-down | --reload"
@@ -235,11 +329,14 @@ help_message(){
   echo "${EPACE}-v | --vis | --visuliser"
   echo -e "\033[1mGENERAL OPTIONS\033[0m"
   echo "${EPACE}${EPACE}Display help and exit."
+  echo "${EPACE}--upgrade"
+echo "${EPACE}${EPACE} upgrades the script to the latest version"
   echo "${EPACE}-H, --help"
 }
 
 if [ -z "${1}" ]; then
   help_message
+              check_new_version
   exit 1
 fi
 
@@ -286,9 +383,17 @@ while [ ! -z "${1}" ]; do
     -m | --maintenance )
       xshok_docker_maintenance
       ;;
+      --upgrade)
+    xshok_upgrade
+    shift
+    ;;
     *)
       help_message
+                  check_new_version
       ;;
   esac
   shift
 done
+
+# And lastly we exit, Note: the exit is always on the 2nd last line
+exit $?
