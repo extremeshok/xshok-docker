@@ -75,6 +75,7 @@ iotop \
 iperf \
 ipset \
 iptraf \
+logrotate \
 mlocate \
 nano \
 net-tools \
@@ -363,6 +364,37 @@ DAEMON_ARGS="-w 1024"
 EOF
 systemctl daemon-reload
 systemctl enable haveged
+
+# Enable logrotate
+mkdir -p /etc/logrotate.d/
+cat <<EOF > /etc/logrotate.conf
+# eXtremeSHOK.com
+daily
+su root adm
+rotate 7
+create
+compress
+size=10M
+delaycompress
+copytruncate
+
+include /etc/logrotate.d
+EOF
+## Truncate Docker Logs (mitigate log kreep)
+cat <<EOF > /etc/logrotate.d/docker-logs
+# eXtremeSHOK.com
+/var/lib/docker/containers/*/*.log {
+ rotate 7
+ daily
+ compress
+ size=10M
+ missingok
+ delaycompress
+ copytruncate
+}
+EOF
+systemctl restart logrotate.service
+
 
 ## Limit the size and optimise journald
 cat <<EOF > /etc/systemd/journald.conf

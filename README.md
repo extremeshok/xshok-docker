@@ -23,6 +23,7 @@ Turns a fresh ubuntu install into an optimised docker host
 * Set systemd ulimits
 * Set ulimit for the shell user
 * Enable unattended upgrades
+* Enable logrotate with docker logs support
 * Install Docker-ce withdocker-ce-cli containerd.io aufs-tools cgroupfs-mount docker-ce-rootless-extras slirp4netns
 * Install Docker-compose
 * Enable TCP BBR congestion control, improves overall network throughput
